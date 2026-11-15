@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Свеча</title>
+  <meta name="description" content="Читальня русской классики, где у каждой сцены свой свет, погода и звук.">
+  <meta name="theme-color" content="#0f0c0a">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230f0c0a'/%3E%3Cpath d='M32 10c6 9 9 15 9 21a9 9 0 0 1-18 0c0-6 3-12 9-21z' fill='%23e0aa5e'/%3E%3Crect x='28' y='42' width='8' height='14' rx='2' fill='%23efe6d6'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,500;1,7..72,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css?v=1794721481">
+</head>
+<body>
+  <div id="glow" aria-hidden="true"></div>
+  <canvas id="fx" aria-hidden="true"></canvas>
+  <div id="vig" aria-hidden="true"></div>
+  <div id="grain" aria-hidden="true"></div>
+  <div id="veil" aria-hidden="true"></div>
+  <div id="flash" aria-hidden="true"></div>
+  <div id="progress" aria-hidden="true"></div>
+
+  <header class="bar" id="bar">
+    <a class="icon-btn back" id="back" href="#/" aria-label="В библиотеку">
+      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+    <div class="bar-title" id="barTitle"></div>
+    <div class="bar-actions">
+      <a class="icon-btn" id="tocBtn" href="#/" aria-label="Оглавление" hidden>
+        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M8 7h11M8 12h11M8 17h11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="4.5" cy="7" r="1" fill="currentColor"/><circle cx="4.5" cy="12" r="1" fill="currentColor"/><circle cx="4.5" cy="17" r="1" fill="currentColor"/></svg>
+      </a>
+      <button class="icon-btn" id="soundBtn" aria-label="Включить звук" aria-pressed="false">
+        <svg class="ic-off" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M4 9.5h3.2L12 5.5v13l-4.8-4H4z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M16 9.5l5 5M21 9.5l-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <svg class="ic-on" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M4 9.5h3.2L12 5.5v13l-4.8-4H4z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M15.5 9a4.2 4.2 0 0 1 0 6M18.2 6.5a8 8 0 0 1 0 11" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </button>
+      <button class="icon-btn" id="setBtn" aria-label="Настройки чтения" aria-expanded="false">
+        <span class="aa" aria-hidden="true">Aa</span>
+      </button>
+    </div>
+  </header>
+
+  <div class="panel" id="settings" hidden>
+    <div class="row">
+      <span>Размер текста</span>
+      <div class="seg">
+        <button id="fsDown" aria-label="Меньше">A−</button>
+        <button id="fsUp" aria-label="Больше">A+</button>
+      </div>
+    </div>
+    <div class="row">
+      <span>Погода и свет</span>
+      <button class="switch" id="fxToggle" role="switch" aria-checked="true"><i></i></button>
+    </div>
+    <div class="row">
+      <span>Музыка</span>
+      <button class="switch" id="musicToggle" role="switch" aria-checked="true" aria-label="Музыка"><i></i></button>
+    </div>
+    <div class="row">
+      <span>Громкость</span>
+      <input type="range" id="vol" min="0" max="1" step="0.01" value="0.7" aria-label="Громкость">
+    </div>
+    <p class="panel-note">Выделите любую фразу, чтобы сделать из неё карточку.</p>
+  </div>
+
+  <main id="view"></main>
+
+  <div class="place" id="place" aria-live="polite"></div>
+  <div class="stage-toast" id="stageToast" aria-live="polite"></div>
+  <a class="compass" id="compass" href="#" hidden aria-label="Путь героя"></a>
+  <div class="note-pop" id="note" role="status" hidden></div>
+
+  <button class="quote-pill" id="quoteBtn" hidden>
+    <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M7 7h4v4c0 3-1.5 5-4 6M14 7h4v4c0 3-1.5 5-4 6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+    Карточка с цитатой
+  </button>
+
+  <div class="hint" id="hint" hidden>
+    <span>Со звуком атмосфернее</span>
+    <button id="hintOn">Включить</button>
+    <button id="hintX" class="x" aria-label="Скрыть">×</button>
+  </div>
+
+  <div class="modal" id="cardModal" hidden role="dialog" aria-modal="true" aria-label="Карточка с цитатой">
+    <div class="modal-inner">
+      <img id="cardImg" alt="Карточка с цитатой">
+      <div class="modal-actions">
+        <button id="cardSave" class="btn solid">Сохранить</button>
+        <button id="cardShare" class="btn" hidden>Поделиться</button>
+        <button id="cardClose" class="btn ghost">Закрыть</button>
+      </div>
+      <p class="card-hint" id="cardHint" hidden>Чтобы сохранить, нажмите на картинку правой кнопкой или удерживайте её пальцем.</p>
+    </div>
+  </div>
+
+  <script src="js/catalog.js?v=1794721481"></script>
+  <script src="js/atmos.js?v=1794721481"></script>
+  <script src="js/sound.js?v=1794721481"></script>
+  <script src="js/monomyth.js?v=1794721481"></script>
+  <script src="js/paths.js?v=1794721481"></script>
+  <script src="js/journey.js?v=1794721481"></script>
+  <script src="js/card.js?v=1794721481"></script>
+  <script src="js/app.js?v=1794721481"></script>
+</body>
+</html>
