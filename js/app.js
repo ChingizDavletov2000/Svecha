@@ -175,7 +175,7 @@
   // ---------- библиотека ----------
   async function library() {
     current = null;
-    document.title = 'Свеча — читальня классики';
+    document.title = 'Свеча — путь героя';
     setBar('', null, null);
     Atmos.set('candle'); Atmos.follow(true);
     const idx = await Promise.all(WORKS.map(w => index(w.id).catch(() => null)));
@@ -209,7 +209,7 @@
         <div class="brand rv">
           <div class="flame" aria-hidden="true"></div>
           <h1>Свеча</h1>
-          <p class="lead">Читальня русской классики. У каждой сцены здесь свой свет, своя погода и свой звук.</p>
+          <p class="lead">Путь героя по Кэмпбеллу — на героях русской классики. Книги здесь целиком, и у каждой сцены свой свет, погода и звук.</p>
         </div>
         <a class="mono-entry rv" href="#monomyth">
           <span class="mono-ring" aria-hidden="true">${Journey.ring({ mode: 'allmini' })}</span>
